@@ -2,18 +2,25 @@
 
 namespace Tests\Feature;
 
-// use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use App\Models\User;
+use App\Models\Event;
 
-class ExampleTest extends TestCase
+class BookingTest extends TestCase
 {
-    /**
-     * A basic test example.
-     */
-    public function test_the_application_returns_a_successful_response(): void
+    use RefreshDatabase;
+
+    public function test_user_can_create_booking()
     {
-        $response = $this->get('/');
+        $user = User::factory()->create();
+        $event = Event::factory()->create(['capacity' => 5]);
+
+        $response = $this->actingAs($user, 'sanctum')->postJson('/api/bookings', [
+            'event_id' => $event->id,
+        ]);
 
         $response->assertStatus(200);
     }
 }
+
